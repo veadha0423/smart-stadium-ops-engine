@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import random
 
 st.set_page_config(page_title="Stadium Ops Engine", page_icon="🏟️", layout="wide")
 
