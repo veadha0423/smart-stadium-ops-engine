@@ -7,6 +7,7 @@ st.title("🏟️ Smart Stadium & Tournament Operations Engine")
 st.subheader("Day 5 Production Triage Dashboard")
 
 uploaded_file = st.file_uploader("Upload Unstructured Match-Day PDF Log", type=["pdf"])
+BACKEND_URL = "https://smart-stadium-ops-engine.onrender.com"
 
 if uploaded_file is not None:
     if st.button("Execute Tactical Triage Run"):
@@ -14,7 +15,7 @@ if uploaded_file is not None:
             # We connect this to your backend deployment URL later
             files = {"file": (uploaded_file.name, uploaded_file.getvalue(), "application/pdf")}
             try:
-                response = requests.post("YOUR_BACKEND_DEPLOYED_URL/api/v1/incident-triage", files=files)
+                response = requests.post("f{BACKEND_URL}/api/v1/incident-triage", files=files)
                 if response.status_code == 200:
                     data = response.json()
                     
