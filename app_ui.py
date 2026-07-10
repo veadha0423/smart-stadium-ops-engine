@@ -3,9 +3,9 @@ import requests
 
 st.set_page_config(page_title="Stadium Ops Engine", page_icon="🏟️", layout="wide")
 
-game_day = math.random.randint(1, 100)
+game_day = random.randint(1, 100)
 st.title("🏟️ Smart Stadium & Tournament Operations Engine")
-st.subheader("Game Day {game_day}: Production Triage Dashboard")
+st.subheader(f"Game Day {game_day}: Production Triage Dashboard")
 
 uploaded_file = st.file_uploader("Upload Unstructured Match-Day PDF Log", type=["pdf"])
 BACKEND_URL = "https://smart-stadium-ops-engine.onrender.com"
