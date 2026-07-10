@@ -3,8 +3,9 @@ import requests
 
 st.set_page_config(page_title="Stadium Ops Engine", page_icon="🏟️", layout="wide")
 
+game_day = math.random.randint(1, 100)
 st.title("🏟️ Smart Stadium & Tournament Operations Engine")
-st.subheader("Day 5 Production Triage Dashboard")
+st.subheader("Game Day {game_day}: Production Triage Dashboard")
 
 uploaded_file = st.file_uploader("Upload Unstructured Match-Day PDF Log", type=["pdf"])
 BACKEND_URL = "https://smart-stadium-ops-engine.onrender.com"
@@ -15,7 +16,7 @@ if uploaded_file is not None:
             # We connect this to your backend deployment URL later
             files = {"file": (uploaded_file.name, uploaded_file.getvalue(), "application/pdf")}
             try:
-                response = requests.post("f{BACKEND_URL}/api/v1/incident-triage", files=files)
+                response = requests.post(f"{BACKEND_URL}/api/v1/incident-triage", files=files)
                 if response.status_code == 200:
                     data = response.json()
                     
