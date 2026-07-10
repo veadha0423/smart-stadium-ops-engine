@@ -1,17 +1,19 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from app.core.parser import StadiumOpsParser
 from app.core.math_engine import StadiumSeverityEngine
+from app.services.ai_reasoner import AIOperationalReasoner
 from app.schemas.stadium_schema import TriageResponse
 import os
 import shutil
 
 app = FastAPI(
     title="Smart Stadium & Tournament Operations Server",
-    description="Day 3: Severity Mathematical Matrix Engine Active."
+    description="Day 4: AI Operational Reasoner Active."
 )
 
 parser = StadiumOpsParser()
 matrix_engine = StadiumSeverityEngine()
+ai_engine = AIOperationalReasoner()
 
 @app.post("/api/v1/incident-triage", response_model=TriageResponse)
 async def triage_incident_endpoint(file: UploadFile = File(...)):
@@ -26,16 +28,22 @@ async def triage_incident_endpoint(file: UploadFile = File(...)):
         with open(temp_file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
             
-        # 1. Day 2 Parsing Pipeline
+        # 1. Day 2 Parser Layer
         raw_text = parser.extract_raw_text(temp_file_path)
         segmented_logs = parser.segment_incident_log(raw_text)
         
-        # 2. Day 3 Mathematical Evaluation Passing
+        # 2. Day 3 Math Engine Layer
         severity_scores = matrix_engine.process_stadium_matrix(segmented_logs)
-        
-        # Identify the critical dispatch sector based on mathematical severity metrics
         primary_threat = max(severity_scores, key=severity_scores.get)
         highest_score = severity_scores[primary_threat]
+        
+        # 3. Day 4 AI Reasoner Layer
+        target_log_text = segmented_logs.get(primary_threat, "")
+        ai_directive = ai_engine.generate_dispatch_instructions(
+            sector=primary_threat,
+            severity_score=highest_score,
+            raw_log=target_log_text
+        )
         
         return {
             "filename": file.filename,
@@ -43,6 +51,7 @@ async def triage_incident_endpoint(file: UploadFile = File(...)):
             "primary_threat_sector": primary_threat,
             "highest_severity_score": highest_score,
             "severity_matrix": severity_scores,
+            "ai_dispatch_directive": ai_directive,
             "departmental_logs": segmented_logs
         }
         
