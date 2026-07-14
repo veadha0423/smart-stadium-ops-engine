@@ -17,6 +17,12 @@ ai_engine = AIOperationalReasoner()
 
 @app.post("/api/v1/incident-triage", response_model=TriageResponse)
 async def triage_incident_endpoint(file: UploadFile = File(...)):
+    MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB Limit
+    file.file.seek(0, os.SEEK_END)
+    file_size = file.file.tell()
+    file.file.seek(0)  # Reset file pointer
+    if file_size > MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="Security Exception: File profile exceeds 5MB limit.")
     if not file.filename.endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Invalid extension. Only PDF logs supported.")
         
